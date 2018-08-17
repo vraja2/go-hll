@@ -1,12 +1,12 @@
 package hll
 
-type hll struct {
+type HLL struct {
   registers []int
 }
 
-func New(numRegisters int) hll {
+func NewHLL(numRegisters int) HLL {
   registers := make([]int, numRegisters)
-  hllInstance := hll {registers}
+  hllInstance := HLL {registers}
   return hllInstance
 }
 

@@ -14,7 +14,11 @@ type HLL struct {
   murmur32 hash.Hash32
 }
 
-func NewHLL(numRegisterBits int) HLL {
+func NewHLL() HLL {
+  return NewHLLWithRegisterBits(6)
+}
+
+func NewHLLWithRegisterBits(numRegisterBits int) HLL {
   numRegisters := int(math.Exp2(float64(numRegisterBits)))
   registers := make([]int, numRegisters)
   murmur32 := murmur3.New32()
@@ -28,7 +32,7 @@ func (hll HLL) Add(value string) {
   // bit mask to fetch bits representing register index to update
   maskRegisterBits := ^uint32(0) >> uint32(32 - hll.numRegisterBits)
   registerIndex := uint32(hashedValue & maskRegisterBits)
-  remainingBits := uint32(hashedValue) >> uint32(hll.numRegisterBits)
+  remainingBits := hashedValue >> uint32(hll.numRegisterBits)
   trailingZeroes := bits.TrailingZeros32(remainingBits)
   registerValue := 0
   if trailingZeroes != 32 {

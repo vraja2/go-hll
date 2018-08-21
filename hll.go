@@ -38,7 +38,7 @@ func (hll HLL) Add(value string) {
   if trailingZeroes != 32 {
     registerValue = trailingZeroes
   }
-  hll.registers[registerIndex] = int(math.Max(float64(hll.registers[registerIndex]), float64(registerValue)))
+  hll.registers[registerIndex] = int(math.Max(float64(hll.registers[registerIndex]), float64(registerValue + 1)))
 }
 
 func Count() {

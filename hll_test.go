@@ -29,6 +29,7 @@ func TestAdd(t *testing.T) {
   mockMurmur32.EXPECT().Sum32().Return(uint32(3688933174))
   hllInstance.Add("hello")
   for idx, registerVal := range hllInstance.registers {
+    // last 6 bits: 110110 = 54
     if idx == 54 {
       assert.Equal(t, 3, registerVal)
     } else {

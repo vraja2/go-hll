@@ -41,8 +41,15 @@ func (hll HLL) Add(value string) {
   hll.registers[registerIndex] = int(math.Max(float64(hll.registers[registerIndex]), float64(registerValue + 1)))
 }
 
-func Count() {
-
+func (hll HLL) Count() float64 {
+  harmonicMean := 0.0
+  for _, registerVal := range hll.registers {
+    harmonicMean += math.Exp2(float64(-1 * registerVal))
+  }
+  harmonicMean = math.Pow(harmonicMean, -1)
+  // TODO: figure out what alpha param means
+  count := 0.709 * math.Pow(float64(len(hll.registers)), float64(2)) * float64(harmonicMean)
+  return count
 }
 
 func Merge() {

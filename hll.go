@@ -84,7 +84,7 @@ func (hll HLL) Merge(other HLL) (error) {
   }
 
   for index, registerVal := range other.registers {
-    hll.registers[index] = int(math.Max(float64(registerVal), float64(other.registers[index])))
+    hll.registers[index] = int(math.Max(float64(registerVal), float64(hll.registers[index])))
   }
 
   return nil

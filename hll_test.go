@@ -1,6 +1,7 @@
 package hll
 
 import (
+  "errors"
   "testing"
   "github.com/stretchr/testify/assert"
   "github.com/golang/mock/gomock"
@@ -66,8 +67,28 @@ func TestCountLargeRangeCorrection(t *testing.T) {
 
 }
 
-func TestMerge(t *testing.T) {
+func TestMergeUnequalRegisterBits(t *testing.T) {
+  hllInstance1 := NewHLLWithRegisterBits(6)
+  hllInstance2 := NewHLLWithRegisterBits(5)
+  assert.Equal(t, errors.New("hll: can't merge HLLs with different number of registers"), hllInstance1.Merge(hllInstance2))
+}
 
+func TestMergeValid(t *testing.T) {
+  numRegisterBits := 6
+  hllInstance := NewHLLWithRegisterBits(numRegisterBits)
+  hllInstance.registers[10] = 5
+  other := NewHLLWithRegisterBits(numRegisterBits)
+  other.registers[5] = 2
+  assert.Nil(t, hllInstance.Merge(other))
+  for idx, registerVal := range hllInstance.registers {
+    if idx == 5 {
+      assert.Equal(t, 2, registerVal)
+    } else if idx == 10 {
+      assert.Equal(t, 5, registerVal)
+    } else {
+      assert.Equal(t, 0, registerVal)
+    }
+  }
 }
 
 func TestGetAlphaByNumRegisters(t *testing.T) {

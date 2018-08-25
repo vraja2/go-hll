@@ -5,7 +5,7 @@ import (
   "github.com/stretchr/testify/assert"
   "github.com/golang/mock/gomock"
   "go-hll/mocks"
-  "fmt"
+//  "fmt"
 )
 
 func TestNewHLLWithRegisterBits(t *testing.T) {
@@ -39,7 +39,7 @@ func TestAdd(t *testing.T) {
   }
 }
 
-func TestCount(t *testing.T) {
+func TestCountSmallRangeCorrection(t *testing.T) {
   numRegisterBits := 6
   numRegisters := 64
   registers := make([]int, numRegisters)
@@ -51,6 +51,12 @@ func TestCount(t *testing.T) {
   // 111000001010011100110110
   mockMurmur32.EXPECT().Sum32().Return(uint32(2903491477))
   hllInstance.Add("hello")
-  fmt.Printf("%d\n", hllInstance.registers[21])
-  fmt.Printf("%f\n", hllInstance.Count())
+  assert.Equal(t, 1.0, hllInstance.Count())
+}
+
+func TestGetAlphaByNumRegisters(t *testing.T) {
+  assert.Equal(t, 0.673,  getAlphaByNumRegisters(16))
+  assert.Equal(t, 0.697, getAlphaByNumRegisters(32))
+  assert.Equal(t, 0.709, getAlphaByNumRegisters(64))
+  assert.Equal(t, 0.7213 / (1 + 1.079 / 128.0), getAlphaByNumRegisters(128))
 }

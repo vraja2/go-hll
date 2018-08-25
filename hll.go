@@ -1,6 +1,7 @@
 package hll
 
 import (
+  "errors"
   "github.com/spaolacci/murmur3"
   "hash"
   "math"
@@ -76,8 +77,17 @@ func (hll HLL) Count() float64 {
   return count
 }
 
-func Merge() {
+func (hll HLL) Merge(other HLL) (error) {
+  // verify that num register bits are equal
+  if hll.numRegisterBits != other.numRegisterBits {
+    return errors.New("hll: can't merge HLLs with different number of registers")
+  }
 
+  for index, registerVal := range other.registers {
+    hll.registers[index] = int(math.Max(float64(registerVal), float64(other.registers[index])))
+  }
+
+  return nil
 }
 
 func getAlphaByNumRegisters(numRegisters int) float64 {

@@ -66,6 +66,10 @@ func TestCountLargeRangeCorrection(t *testing.T) {
 
 }
 
+func TestMerge(t *testing.T) {
+
+}
+
 func TestGetAlphaByNumRegisters(t *testing.T) {
   assert.Equal(t, 0.673,  getAlphaByNumRegisters(16))
   assert.Equal(t, 0.697, getAlphaByNumRegisters(32))

@@ -54,6 +54,18 @@ func TestCountSmallRangeCorrection(t *testing.T) {
   assert.Equal(t, 1.0, hllInstance.Count())
 }
 
+func TestCountSmallRangeNoCorrection(t *testing.T) {
+
+}
+
+func TestCountIntermediateRangeNoCorrection(t *testing.T) {
+
+}
+
+func TestCountLargeRangeCorrection(t *testing.T) {
+
+}
+
 func TestGetAlphaByNumRegisters(t *testing.T) {
   assert.Equal(t, 0.673,  getAlphaByNumRegisters(16))
   assert.Equal(t, 0.697, getAlphaByNumRegisters(32))

@@ -6,7 +6,6 @@ import (
   "hash"
   "math"
   "math/bits"
-//  "fmt"
 )
 
 type HLL struct {
@@ -15,10 +14,12 @@ type HLL struct {
   murmur32 hash.Hash32
 }
 
+// Returns new HLL instance configured to use the final 6 bits to denote the register (64 register total)
 func NewHLL() HLL {
   return NewHLLWithRegisterBits(6)
 }
 
+// Returns new HLL instance with the specified number of register bits
 func NewHLLWithRegisterBits(numRegisterBits int) HLL {
   numRegisters := int(math.Exp2(float64(numRegisterBits)))
   registers := make([]int, numRegisters)
@@ -27,6 +28,7 @@ func NewHLLWithRegisterBits(numRegisterBits int) HLL {
   return hllInstance
 }
 
+// Add string value to the HLL. MurmurHash is used to get 32 bit hash of string bytes.
 func (hll HLL) Add(value string) {
   hll.murmur32.Write([]byte(value))
   hashedValue := hll.murmur32.Sum32()
@@ -42,6 +44,7 @@ func (hll HLL) Add(value string) {
   hll.registers[registerIndex] = int(math.Max(float64(hll.registers[registerIndex]), float64(registerValue + 1)))
 }
 
+// Computes the count/cardinality from the instance's register values
 func (hll HLL) Count() float64 {
   harmonicMean := 0.0
   numZeroes := 0.0
@@ -77,6 +80,8 @@ func (hll HLL) Count() float64 {
   return count
 }
 
+// Merges two HLL instances by computing max(HLL1.register[i], HLL2.register[i]) for i in [0, numRegisters - 1]. Both
+// HLLs must have the same number of register bits.
 func (hll HLL) Merge(other HLL) (error) {
   // verify that num register bits are equal
   if hll.numRegisterBits != other.numRegisterBits {

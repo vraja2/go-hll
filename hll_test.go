@@ -6,7 +6,6 @@ import (
   "github.com/stretchr/testify/assert"
   "github.com/golang/mock/gomock"
   "go-hll/mocks"
-//  "fmt"
 )
 
 func TestNewHLLWithRegisterBits(t *testing.T) {
@@ -56,15 +55,15 @@ func TestCountSmallRangeCorrection(t *testing.T) {
 }
 
 func TestCountSmallRangeNoCorrection(t *testing.T) {
-
+  // TODO
 }
 
 func TestCountIntermediateRangeNoCorrection(t *testing.T) {
-
+  // TODO
 }
 
 func TestCountLargeRangeCorrection(t *testing.T) {
-
+  // TODO
 }
 
 func TestMergeUnequalRegisterBits(t *testing.T) {

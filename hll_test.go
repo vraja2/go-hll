@@ -17,7 +17,7 @@ func TestNewHLLWithRegisterBits(t *testing.T) {
 	assert.Equal(t, expectedRegisters, hllInstance.registers, "Registers should be equal")
 }
 
-func TestAdd(t *testing.T) {
+func TestAddString(t *testing.T) {
 	numRegisterBits := 6
 	numRegisters := 64
 	registers := make([]int, numRegisters)
@@ -26,9 +26,10 @@ func TestAdd(t *testing.T) {
 	mockMurmur32 := mocks.NewMockHash32(mockCtrl)
 	hllInstance := HLL{numRegisterBits, registers, mockMurmur32}
 	mockMurmur32.EXPECT().Write([]byte("hello"))
-	// 111000001010011100110110
+        // sample input/output from http://content.research.neustar.biz/blog/hll.html
+        // 111000001010011100110110
 	mockMurmur32.EXPECT().Sum32().Return(uint32(3688933174))
-	hllInstance.Add("hello")
+	hllInstance.AddString("hello")
 	for idx, registerVal := range hllInstance.registers {
 		// last 6 bits: 110110 = 54
 		if idx == 54 {
@@ -47,10 +48,9 @@ func TestCountSmallRangeCorrection(t *testing.T) {
 	defer mockCtrl.Finish()
 	mockMurmur32 := mocks.NewMockHash32(mockCtrl)
 	hllInstance := HLL{numRegisterBits, registers, mockMurmur32}
-	mockMurmur32.EXPECT().Write([]byte("hello"))
-	// 111000001010011100110110
-	mockMurmur32.EXPECT().Sum32().Return(uint32(2903491477))
-	hllInstance.Add("hello")
+        // sample input/output from http://content.research.neustar.biz/blog/hll.html
+        // 100101101011110000110000
+        hllInstance.AddHash(uint32(1771486256))
 	assert.Equal(t, 1.0, hllInstance.Count())
 }
 

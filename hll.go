@@ -28,10 +28,8 @@ func NewHLLWithRegisterBits(numRegisterBits int) HLL {
 	return hllInstance
 }
 
-// Add string value to the HLL. MurmurHash is used to get 32 bit hash of string bytes.
-func (hll HLL) Add(value string) {
-	hll.murmur32.Write([]byte(value))
-	hashedValue := hll.murmur32.Sum32()
+// Add 32 bit hash to HLL
+func (hll HLL) AddHash(hashedValue uint32) {
 	// bit mask to fetch bits representing register index to update
 	maskRegisterBits := ^uint32(0) >> uint32(32-hll.numRegisterBits)
 	registerIndex := uint32(hashedValue & maskRegisterBits)
@@ -45,14 +43,22 @@ func (hll HLL) Add(value string) {
 		registerValue = trailingZeroes + 1
 	}
 	hll.registers[registerIndex] = int(math.Max(float64(hll.registers[registerIndex]), float64(registerValue)))
+
+}
+
+// Add string value to the HLL. MurmurHash is used to get 32 bit hash of string bytes.
+func (hll HLL) AddString(value string) {
+	hll.murmur32.Write([]byte(value))
+	hashedValue := hll.murmur32.Sum32()
+        hll.AddHash(hashedValue)
 }
 
 // Computes the count/cardinality from the instance's register values
 func (hll HLL) Count() float64 {
 	harmonicMean := 0.0
 	numZeroRegisters := 0.0
-	for _, registerVal := range hll.registers {
-		harmonicMean += 1.0 / math.Pow(2.0, float64(registerVal))
+        for _, registerVal := range hll.registers {
+                harmonicMean += 1.0 / math.Pow(2.0, float64(registerVal))
 		if registerVal == 0 {
 			numZeroRegisters += 1.0
 		}

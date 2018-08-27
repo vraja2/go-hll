@@ -17,6 +17,9 @@ Under the hood, `AddString` uses `MurmurHash32` to hash the provided string into
 ### Get the count/cardinality of the HLL instance
 `count := hllInstance.Count()`
 
+### Merge two HLL instances
+`hllInstance.Merge(otherHllInstance)`
+
 ## Development
 
 ### Running Tests

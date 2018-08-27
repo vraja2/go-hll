@@ -17,6 +17,7 @@ func TestNewHLLWithRegisterBits(t *testing.T) {
 	assert.Equal(t, expectedRegisters, hllInstance.registers, "Registers should be equal")
 }
 
+// TODO: add more tests from Neustar simulation http://content.research.neustar.biz/blog/hll.html
 func TestAddString(t *testing.T) {
 	numRegisterBits := 6
 	numRegisters := 64

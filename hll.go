@@ -50,15 +50,15 @@ func (hll HLL) AddHash(hashedValue uint32) {
 func (hll HLL) AddString(value string) {
 	hll.murmur32.Write([]byte(value))
 	hashedValue := hll.murmur32.Sum32()
-        hll.AddHash(hashedValue)
+	hll.AddHash(hashedValue)
 }
 
 // Computes the count/cardinality from the instance's register values
 func (hll HLL) Count() float64 {
 	harmonicMean := 0.0
 	numZeroRegisters := 0.0
-        for _, registerVal := range hll.registers {
-                harmonicMean += 1.0 / math.Pow(2.0, float64(registerVal))
+	for _, registerVal := range hll.registers {
+		harmonicMean += 1.0 / math.Pow(2.0, float64(registerVal))
 		if registerVal == 0 {
 			numZeroRegisters += 1.0
 		}

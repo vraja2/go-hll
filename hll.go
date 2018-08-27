@@ -83,7 +83,8 @@ func (hll HLL) Count() float64 {
 		count = estimate
 	} else {
 		// large range correction
-		count = math.Pow(-2.0, 32.0) * math.Log2(1-estimate/math.Pow(2, 32))
+		// TODO: re-use 2^32
+		count = -1 * math.Pow(2.0, 32.0) * math.Log2(1-estimate/math.Pow(2, 32))
 	}
 
 	return count

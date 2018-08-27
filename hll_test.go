@@ -70,11 +70,33 @@ func TestCountSmallRangeNoCorrection(t *testing.T) {
 }
 
 func TestCountIntermediateRangeNoCorrection(t *testing.T) {
-	// TODO
+	numRegisterBits := 6
+	numRegisters := 64
+	registers := make([]int, numRegisters)
+	// set all registers to 20 to force the intermediate range case
+	for idx := range registers {
+		registers[idx] = 20
+	}
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockMurmur32 := mocks.NewMockHash32(mockCtrl)
+	hllInstance := HLL{numRegisterBits, registers, mockMurmur32}
+	assert.Equal(t, 47580184.576, hllInstance.Count())
 }
 
 func TestCountLargeRangeCorrection(t *testing.T) {
-	// TODO
+	numRegisterBits := 6
+	numRegisters := 64
+	registers := make([]int, numRegisters)
+	// set all registers to 26 to force large range correction
+	for idx := range registers {
+		registers[idx] = 25
+	}
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockMurmur32 := mocks.NewMockHash32(mockCtrl)
+	hllInstance := HLL{numRegisterBits, registers, mockMurmur32}
+	assert.Equal(t, 2712319089.293557, hllInstance.Count())
 }
 
 func TestMergeUnequalRegisterBits(t *testing.T) {

@@ -55,7 +55,18 @@ func TestCountSmallRangeCorrection(t *testing.T) {
 }
 
 func TestCountSmallRangeNoCorrection(t *testing.T) {
-	// TODO
+	numRegisterBits := 4
+	numRegisters := 16
+	registers := make([]int, numRegisters)
+	// set all registers to 1 to force numZeroRegisters == 0 condiition
+	for idx := range registers {
+		registers[idx] = 1
+	}
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockMurmur32 := mocks.NewMockHash32(mockCtrl)
+	hllInstance := HLL{numRegisterBits, registers, mockMurmur32}
+	assert.Equal(t, 21.536, hllInstance.Count())
 }
 
 func TestCountIntermediateRangeNoCorrection(t *testing.T) {

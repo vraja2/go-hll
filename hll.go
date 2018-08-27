@@ -36,22 +36,25 @@ func (hll HLL) Add(value string) {
 	maskRegisterBits := ^uint32(0) >> uint32(32-hll.numRegisterBits)
 	registerIndex := uint32(hashedValue & maskRegisterBits)
 	remainingBits := hashedValue >> uint32(hll.numRegisterBits)
+	numRemainingBits := 32 - hll.numRegisterBits
 	trailingZeroes := bits.TrailingZeros32(remainingBits)
 	registerValue := 0
-	if trailingZeroes != 32 {
-		registerValue = trailingZeroes
+	if trailingZeroes > numRemainingBits {
+		registerValue = numRemainingBits + 1
+	} else {
+		registerValue = trailingZeroes + 1
 	}
-	hll.registers[registerIndex] = int(math.Max(float64(hll.registers[registerIndex]), float64(registerValue+1)))
+	hll.registers[registerIndex] = int(math.Max(float64(hll.registers[registerIndex]), float64(registerValue)))
 }
 
 // Computes the count/cardinality from the instance's register values
 func (hll HLL) Count() float64 {
 	harmonicMean := 0.0
-	numZeroes := 0.0
+	numZeroRegisters := 0.0
 	for _, registerVal := range hll.registers {
 		harmonicMean += 1.0 / math.Pow(2.0, float64(registerVal))
 		if registerVal == 0 {
-			numZeroes += 1.0
+			numZeroRegisters += 1.0
 		}
 	}
 	harmonicMean = 1.0 / harmonicMean
@@ -60,10 +63,10 @@ func (hll HLL) Count() float64 {
 	count := 0.0
 	// small range correction
 	if estimate <= (5.0/2.0)*float64(len(hll.registers)) {
-		if numZeroes == 0 {
+		if numZeroRegisters == 0 {
 			count = estimate
 		} else {
-			count = math.Round(float64(len(hll.registers)) * math.Log2(float64(len(hll.registers))/numZeroes))
+			count = math.Round(float64(len(hll.registers)) * math.Log2(float64(len(hll.registers))/numZeroRegisters))
 		}
 
 		return count

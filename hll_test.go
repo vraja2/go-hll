@@ -17,7 +17,6 @@ func TestNewHLLWithRegisterBits(t *testing.T) {
 	assert.Equal(t, expectedRegisters, hllInstance.registers, "Registers should be equal")
 }
 
-// TODO: add more tests from Neustar simulation http://content.research.neustar.biz/blog/hll.html
 func TestAddString(t *testing.T) {
 	numRegisterBits := 6
 	numRegisters := 64
@@ -39,6 +38,22 @@ func TestAddString(t *testing.T) {
 			assert.Equal(t, 0, registerVal)
 		}
 	}
+}
+
+func TestAddCountSequence(t *testing.T) {
+        assert := assert.New(t)
+        numRegisterBits := 6
+	hllInstance := NewHLLWithRegisterBits(numRegisterBits)
+        hllInstance.AddHash(1455387899)
+        assert.Equal(1.0, hllInstance.Count())
+        hllInstance.AddHash(619839696)
+        assert.Equal(2.0, hllInstance.Count())
+        hllInstance.AddHash(3568685273)
+        assert.Equal(3.0, hllInstance.Count())
+        hllInstance.AddHash(1436505107)
+        assert.Equal(4.0, hllInstance.Count())
+        hllInstance.AddHash(2298164309)
+        assert.Equal(5.0, hllInstance.Count())
 }
 
 func TestCountSmallRangeCorrection(t *testing.T) {
